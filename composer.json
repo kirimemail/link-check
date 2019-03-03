@@ -1,0 +1,31 @@
+{
+  "name": "kirimemail/link-check",
+  "description": "Check link safety(redirect,safebrowsing,etc)",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kirim.Email",
+      "email": "developer@kirim.email"
+    }
+  ],
+  "require": {
+    "ext-curl": "*",
+    "paquettg/php-html-parser": "^2.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kirimemail\\LinkCheck\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Kirimemail\\LinkCheck\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "phpunit --do-not-cache-result tests"
+  }
+}
