@@ -160,8 +160,13 @@ class Checker
      */
     public function checkSafebrowsing($url)
     {
-        $safebrowsing = new SafeBrowsing($this->options['google_api_key']);
+        try {
+            $safebrowsing = new SafeBrowsing($this->options['google_api_key']);
+            $result = $safebrowsing->listed($url);
+        } catch (\Throwable $e) {
+            return false;
+        }
 
-        return $safebrowsing->listed($url);
+        return $result;
     }
 }
