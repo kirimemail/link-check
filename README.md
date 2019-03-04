@@ -1,5 +1,7 @@
 # PHP library to check link safety
 
+[![Build Status](https://travis-ci.org/kirimemail/link-check.svg?branch=master)](https://travis-ci.org/kirimemail/link-check)
+
 ## Usage:
 
 ```php
