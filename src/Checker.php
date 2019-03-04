@@ -5,6 +5,7 @@
 
 namespace Kirimemail\LinkCheck;
 
+use Ampersa\SafeBrowsing\SafeBrowsing;
 use PHPHtmlParser\Dom;
 
 class Checker
@@ -12,6 +13,7 @@ class Checker
     const OK = 0;
     const GOOGLE_BOT_DIFFERENT_REDIRECT = 101;
     const TOO_MUCH_REDIRECTS = 102;
+    const GOOGLE_UNSAFE = 103;
 
     const GOOGLE_BOT_USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
     const GOOGLE_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36';
@@ -27,7 +29,9 @@ class Checker
             'max_redirects' => 3,
             'whitelist' => [
                 '*://google.*',
-            ]
+            ],
+            'check_google_safebrowsing' => true,
+            'google_api_key' => ''
         ];
         $this->options = array_merge($default, $options);
     }
@@ -50,6 +54,11 @@ class Checker
         for ($i = 0; $i <= $this->options['max_redirects']; $i ++) {
             if ($i === $this->options['max_redirects']) {
                 return self::TOO_MUCH_REDIRECTS;
+            }
+            if ($this->options['check_google_safebrowsing']) {
+                if ($this->checkSafebrowsing($url)) {
+                    return self::GOOGLE_UNSAFE;
+                }
             }
             $botRedirect = $this->getRedirectUrl($url, self::GOOGLE_BOT_USER_AGENT);
             $chromeRedirect = $this->getRedirectUrl($url, self::GOOGLE_CHROME_USER_AGENT);
@@ -142,5 +151,17 @@ class Checker
     private function removeQueryString($url)
     {
         return preg_replace('/\?.*/', '', $url);
+    }
+
+    /**
+     * @param $url
+     * @return bool|string
+     * @throws \Exception
+     */
+    public function checkSafebrowsing($url)
+    {
+        $safebrowsing = new SafeBrowsing($this->options['google_api_key']);
+
+        return $safebrowsing->listed($url);
     }
 }
