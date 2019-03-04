@@ -5,13 +5,10 @@
 
 namespace Kirimemail\LinkCheck\Tests;
 
-define('BASE_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
-
 use Dotenv\Dotenv;
 use Kirimemail\LinkCheck\Checker;
-use PHPUnit\Framework\TestCase;
 
-class CheckerTest extends TestCase
+class CheckerTest extends BaseTest
 {
     private $checker;
 
@@ -19,7 +16,7 @@ class CheckerTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $dotenv = new Dotenv(realpath(BASE_DIR));
+            $dotenv = new Dotenv(realpath($this->BASE_DIR));
             $dotenv->load();
         } catch (\Throwable $e) {
 

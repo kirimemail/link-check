@@ -22,4 +22,12 @@ if ($status === Kirimemail\LinkCheck\Checker::GOOGLE_BOT_DIFFERENT_REDIRECT) {
 if ($status === Kirimemail\LinkCheck\Checker::TOO_MUCH_REDIRECTS) {
     // link has more redirects than expected
 }
+
+if ($status === Kirimemail\LinkCheck\Checker::GOOGLE_UNSAFE) {
+    // link is considered unsafe by google
+}
+
+if ($status === Kirimemail\LinkCheck\Checker::PHISHTANK_VALID) {
+    // link is a valid phishing link in phishtank
+}
 ```

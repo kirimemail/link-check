@@ -5,13 +5,12 @@
 
 namespace Kirimemail\LinkCheck\Tests;
 
-define('BASE_DIR', dirname(__DIR__) . DIRECTORY_SEPARATOR);
-
 use Kirimemail\LinkCheck\Phishtank;
-use PHPUnit\Framework\TestCase;
 
-class PhishtankTest extends TestCase
+class PhishtankTest extends BaseTest
 {
+    private $checker;
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
