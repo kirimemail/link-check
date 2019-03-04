@@ -65,16 +65,4 @@ class CheckerTest extends TestCase
         $this->expectExceptionMessage('Invalid URL');
         $this->checker->check('invalid url');
     }
-
-    public function testSafebrowsing()
-    {
-        if (getenv('GOOGLE_API_KEY') === '') {
-            $this->expectExceptionMessage('A Google Safebrowsing has not been specified');
-        }
-        $this->assertEquals(true, $this->checker->checkSafebrowsing('http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/MALWARE/URL/'));
-        $this->assertEquals(true, $this->checker->checkSafebrowsing('http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/SOCIAL_ENGINEERING/URL/'));
-        $this->assertEquals(true, $this->checker->checkSafebrowsing('http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/UNWANTED_SOFTWARE/URL/'));
-        $this->assertEquals(false, $this->checker->checkSafebrowsing('http://kirim.email'));
-        $this->assertEquals(false, $this->checker->checkSafebrowsing('https://kirimemail.com'));
-    }
 }

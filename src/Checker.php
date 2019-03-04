@@ -5,15 +5,15 @@
 
 namespace Kirimemail\LinkCheck;
 
-use Ampersa\SafeBrowsing\SafeBrowsing;
 use PHPHtmlParser\Dom;
 
-class Checker
+class Checker implements CheckerInterface
 {
     const OK = 0;
     const GOOGLE_BOT_DIFFERENT_REDIRECT = 101;
     const TOO_MUCH_REDIRECTS = 102;
     const GOOGLE_UNSAFE = 103;
+    const PHISHTANK_VALID = 104;
 
     const GOOGLE_BOT_USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
     const GOOGLE_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36';
@@ -31,7 +31,9 @@ class Checker
                 '*://google.*',
             ],
             'check_google_safebrowsing' => true,
-            'google_api_key' => ''
+            'google_api_key' => '',
+            'check_phishtank' => true,
+            'phishtank_api_key' => ''
         ];
         $this->options = array_merge($default, $options);
     }
@@ -58,6 +60,11 @@ class Checker
             if ($this->options['check_google_safebrowsing']) {
                 if ($this->checkSafebrowsing($url)) {
                     return self::GOOGLE_UNSAFE;
+                }
+            }
+            if ($this->options['check_phishtank']) {
+                if ($this->checkPhishtank($url)) {
+                    return self::PHISHTANK_VALID;
                 }
             }
             $botRedirect = $this->getRedirectUrl($url, self::GOOGLE_BOT_USER_AGENT);
@@ -158,15 +165,21 @@ class Checker
      * @return bool|string
      * @throws \Exception
      */
-    public function checkSafebrowsing($url)
+    private function checkSafebrowsing($url)
     {
-        try {
-            $safebrowsing = new SafeBrowsing($this->options['google_api_key']);
-            $result = $safebrowsing->listed($url);
-        } catch (\Throwable $e) {
-            return false;
-        }
+        $safebrowsing = new GoogleSafebrowsing($this->options['google_api_key']);
 
-        return $result;
+        return $safebrowsing->check($url);
+    }
+
+    /**
+     * @param $url
+     * @return bool
+     */
+    private function checkPhishtank($url)
+    {
+        $phishtank = new Phishtank($this->options['phishtank_api_key']);
+
+        return $phishtank->check($url);
     }
 }
