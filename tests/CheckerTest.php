@@ -18,8 +18,12 @@ class CheckerTest extends TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $dotenv = new Dotenv(realpath(BASE_DIR));
-        $dotenv->load();
+        try {
+            $dotenv = new Dotenv(realpath(BASE_DIR));
+            $dotenv->load();
+        } catch (\Throwable $e) {
+
+        }
         $this->checker = new Checker([
             'google_api_key' => getenv('GOOGLE_API_KEY')
         ]);
