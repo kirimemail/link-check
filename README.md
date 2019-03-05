@@ -5,7 +5,17 @@
 ## Usage:
 
 ```php
-$checker = new Kirimemail\LinkCheck\Checker();
+//create checker with default options
+$checker = new Kirimemail\LinkCheck\Checker([
+    'max_redirects' => 3,
+    'whitelist' => [
+         '*://google.*',
+    ],
+    'check_google_safebrowsing' => true,
+    'google_api_key' => '', //necessary if you need to check Google Safebrowsing
+    'check_phishtank' => true,
+    'phishtank_api_key' => '' //optional, but have low rate limit
+]);
 
 $status = $checker->check($url);
 

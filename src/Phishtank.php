@@ -30,14 +30,18 @@ class Phishtank implements CheckerInterface
         }
         $result = json_decode($this->getCurlExec($url), true);
 
-        if (!$result['results']['in_database']) {
-            $real = false;
-        } else {
-            if ($result['results']['valid']) {
-                $real = true;
-            } else {
+        if (array_key_exists('results', $result)) {
+            if (!$result['results']['in_database']) {
                 $real = false;
+            } else {
+                if ($result['results']['valid']) {
+                    $real = true;
+                } else {
+                    $real = false;
+                }
             }
+        } else {
+            $real = false;
         }
 
         return $real;
