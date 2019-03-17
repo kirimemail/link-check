@@ -14,6 +14,7 @@ class Checker implements CheckerInterface
     const TOO_MUCH_REDIRECTS = 102;
     const GOOGLE_UNSAFE = 103;
     const PHISHTANK_VALID = 104;
+    const UNDEFINED_ERROR = 105;
 
     const GOOGLE_BOT_USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
     const GOOGLE_CHROME_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36';
@@ -67,16 +68,20 @@ class Checker implements CheckerInterface
                     return self::PHISHTANK_VALID;
                 }
             }
-            $botRedirect = $this->getRedirectUrl($url, self::GOOGLE_BOT_USER_AGENT);
-            $chromeRedirect = $this->getRedirectUrl($url, self::GOOGLE_CHROME_USER_AGENT);
-            if ($botRedirect || $chromeRedirect) {
-                if ($botRedirect !== $chromeRedirect) {
-                    return self::GOOGLE_BOT_DIFFERENT_REDIRECT;
+            try {
+                $botRedirect = $this->getRedirectUrl($url, self::GOOGLE_BOT_USER_AGENT);
+                $chromeRedirect = $this->getRedirectUrl($url, self::GOOGLE_CHROME_USER_AGENT);
+                if ($botRedirect || $chromeRedirect) {
+                    if ($botRedirect !== $chromeRedirect) {
+                        return self::GOOGLE_BOT_DIFFERENT_REDIRECT;
+                    }
+                } else {
+                    return self::OK;
                 }
-            } else {
-                return self::OK;
+                $url = $chromeRedirect;
+            } catch (\Throwable $e) {
+                return self::UNDEFINED_ERROR;
             }
-            $url = $chromeRedirect;
         }
     }
 
