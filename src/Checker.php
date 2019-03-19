@@ -55,20 +55,21 @@ class Checker implements CheckerInterface
             return self::OK;
         }
         for ($i = 0; $i <= $this->options['max_redirects']; $i ++) {
-            if ($i === $this->options['max_redirects']) {
-                return self::TOO_MUCH_REDIRECTS;
-            }
-            if ($this->options['check_google_safebrowsing']) {
-                if ($this->checkSafebrowsing($url)) {
-                    return self::GOOGLE_UNSAFE;
-                }
-            }
-            if ($this->options['check_phishtank']) {
-                if ($this->checkPhishtank($url)) {
-                    return self::PHISHTANK_VALID;
-                }
-            }
             try {
+                if ($i === $this->options['max_redirects']) {
+                    return self::TOO_MUCH_REDIRECTS;
+                }
+                if ($this->options['check_google_safebrowsing']) {
+                    if ($this->checkSafebrowsing($url)) {
+                        return self::GOOGLE_UNSAFE;
+                    }
+                }
+                if ($this->options['check_phishtank']) {
+                    if ($this->checkPhishtank($url)) {
+                        return self::PHISHTANK_VALID;
+                    }
+                }
+
                 $botRedirect = $this->getRedirectUrl($url, self::GOOGLE_BOT_USER_AGENT);
                 $chromeRedirect = $this->getRedirectUrl($url, self::GOOGLE_CHROME_USER_AGENT);
                 if ($botRedirect || $chromeRedirect) {
