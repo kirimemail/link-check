@@ -29,16 +29,19 @@ class Phishtank implements CheckerInterface
             return false;
         }
         $result = json_decode($this->getCurlExec($url), true);
-
-        if (array_key_exists('results', $result)) {
-            if (!$result['results']['in_database']) {
-                $real = false;
-            } else {
-                if ($result['results']['valid']) {
-                    $real = true;
-                } else {
+        if (null !== $result) {
+            if (array_key_exists('results', $result)) {
+                if (!$result['results']['in_database']) {
                     $real = false;
+                } else {
+                    if ($result['results']['valid']) {
+                        $real = true;
+                    } else {
+                        $real = false;
+                    }
                 }
+            } else {
+                $real = false;
             }
         } else {
             $real = false;
