@@ -34,7 +34,8 @@ class Checker implements CheckerInterface
             'check_google_safebrowsing' => true,
             'google_api_key' => '',
             'check_phishtank' => true,
-            'phishtank_api_key' => ''
+            'phishtank_api_key' => '',
+            'timeout' => 10,
         ];
         $this->options = array_merge($default, $options);
     }
@@ -69,9 +70,9 @@ class Checker implements CheckerInterface
                         return self::PHISHTANK_VALID;
                     }
                 }
-
-                $botRedirect = $this->getRedirectUrl($url, self::GOOGLE_BOT_USER_AGENT);
-                $chromeRedirect = $this->getRedirectUrl($url, self::GOOGLE_CHROME_USER_AGENT);
+                $curl = curl_init();
+                $botRedirect = $this->getRedirectUrl($curl, $url, self::GOOGLE_BOT_USER_AGENT);
+                $chromeRedirect = $this->getRedirectUrl($curl, $url, self::GOOGLE_CHROME_USER_AGENT);
                 if ($botRedirect || $chromeRedirect) {
                     if ($botRedirect !== $chromeRedirect) {
                         return self::GOOGLE_BOT_DIFFERENT_REDIRECT;
@@ -87,14 +88,14 @@ class Checker implements CheckerInterface
     }
 
     /**
-     * @param  string $url
-     * @param  string $userAgent
-     *
-     * @return string $redurectUrl
+     * @param $curl
+     * @param $url
+     * @param $userAgent
+     * @return string|string[]|null
      */
-    private function getRedirectUrl($url, $userAgent)
+    private function getRedirectUrl($curl, $url, $userAgent)
     {
-        $curlInfo = $this->getCurlInfo($url, $userAgent);
+        $curlInfo = $this->getCurlInfo($curl, $url, $userAgent);
         $redirectUrl = $this->removeQueryString(@$curlInfo['redirect_url']);
         if (trim($url, '/') === trim($redirectUrl, '/')) {
             $redirectUrl = '';
@@ -120,7 +121,7 @@ class Checker implements CheckerInterface
     }
 
     /**
-     * @param  string $url
+     * @param string $url
      *
      * @return boolean
      */
@@ -136,20 +137,23 @@ class Checker implements CheckerInterface
     }
 
     /**
-     * @param string $url
-     * @param string $userAgent
-     *
-     * @return array $curlInfo
+     * @param $curl
+     * @param $url
+     * @param $userAgent
+     * @return mixed
      */
-    private function getCurlInfo($url, $userAgent)
+    private function getCurlInfo($curl, $url, $userAgent)
     {
-        $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_FILETIME, true);
         curl_setopt($curl, CURLOPT_NOBODY, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HEADER, true);
+        curl_setopt($curl, CURLOPT_ENCODING, '');
+        curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->options['timeout']);
+        curl_setopt($curl, CURLOPT_TIMEOUT, $this->options['timeout']);
         curl_exec($curl);
         $curlInfo = curl_getinfo($curl);
 
@@ -157,7 +161,7 @@ class Checker implements CheckerInterface
     }
 
     /**
-     * @param  string $url
+     * @param string $url
      *
      * @return string
      */
