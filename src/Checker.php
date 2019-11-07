@@ -93,7 +93,7 @@ class Checker implements CheckerInterface
      * @param $userAgent
      * @return string|string[]|null
      */
-    private function getRedirectUrl($curl, $url, $userAgent)
+    protected function getRedirectUrl($curl, $url, $userAgent)
     {
         $curlInfo = $this->getCurlInfo($curl, $url, $userAgent);
         $redirectUrl = $this->removeQueryString(@$curlInfo['redirect_url']);
@@ -125,7 +125,7 @@ class Checker implements CheckerInterface
      *
      * @return boolean
      */
-    private function inWhitelist($url)
+    protected function inWhitelist($url)
     {
         foreach ($this->options['whitelist'] as $whitelistItem) {
             if (fnmatch($whitelistItem, $url)) {
@@ -142,7 +142,7 @@ class Checker implements CheckerInterface
      * @param $userAgent
      * @return mixed
      */
-    private function getCurlInfo($curl, $url, $userAgent)
+    protected function getCurlInfo($curl, $url, $userAgent)
     {
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_FILETIME, true);
@@ -165,7 +165,7 @@ class Checker implements CheckerInterface
      *
      * @return string
      */
-    private function removeQueryString($url)
+    protected function removeQueryString($url)
     {
         return preg_replace('/\?.*/', '', $url);
     }
@@ -175,7 +175,7 @@ class Checker implements CheckerInterface
      * @return bool|string
      * @throws \Exception
      */
-    private function checkSafebrowsing($url)
+    protected function checkSafebrowsing($url)
     {
         $safebrowsing = new GoogleSafebrowsing($this->options['google_api_key']);
 
@@ -186,7 +186,7 @@ class Checker implements CheckerInterface
      * @param $url
      * @return bool
      */
-    private function checkPhishtank($url)
+    protected function checkPhishtank($url)
     {
         $phishtank = new Phishtank($this->options['phishtank_api_key']);
 
