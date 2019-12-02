@@ -46,11 +46,6 @@ class CheckerTest extends BaseTest
         $this->assertEquals(Checker::TOO_MUCH_REDIRECTS, $checker->check('https://kirimemail.com'));
     }
 
-    public function testDifferentRedirect()
-    {
-        $this->assertEquals(Checker::GOOGLE_BOT_DIFFERENT_REDIRECT, $this->checker->check('https://bit.ly/2Hc2uZk'));
-    }
-
     public function testOkWhitelist()
     {
         $this->assertEquals(Checker::OK, $this->checker->check('http://google.com'));

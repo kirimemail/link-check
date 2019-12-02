@@ -25,7 +25,7 @@ if ($status === Kirimemail\LinkCheck\Checker::OK) {
     // link is suspicious
 }
 
-if ($status === Kirimemail\LinkCheck\Checker::GOOGLE_BOT_DIFFERENT_REDIRECT) {
+if ($status === Kirimemail\LinkCheck\Checker::DIFFERENT_REDIRECT) {
     // link has different redirect locations
 }
 
